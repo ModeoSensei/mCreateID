@@ -6,6 +6,12 @@ Citizen.CreateThread(function()
 		Citizen.Wait(100)
 	end
 
+local MenuOpen = false
+
+local position = {
+    {x = 441.35 , y = -987.05, z = 30.69 },
+}
+
 local Menu = {
     PercentagePanel = true,
     ColourPanel = true,
@@ -34,13 +40,46 @@ local function KeyboardInput(TextEntry, ExampleText, MaxStringLenght)
 		return nil
 	end
 end
-    
 
 ------------ Création du Menu / Sous Menu -----------
 RMenu.Add('modeo', 'main', RageUI.CreateMenu("Commissariat Central", "Carte d'identité"))
 RMenu:Get('modeo', 'main'):SetRectangleBanner(255, 0, 0, 100)
+RMenu:Get('modeo', 'main').Closed = function()
+    MenuOpen = false
+end
 
+Citizen.CreateThread(function()
     while true do
+        Citizen.Wait(0)
+
+        for k in pairs(position) do
+
+            local plyCoords = GetEntityCoords(GetPlayerPed(-1), false)
+            local dist = Vdist(plyCoords.x, plyCoords.y, plyCoords.z, position[k].x, position[k].y, position[k].z)
+            if dist <= 1.0 then
+
+               RageUI.Text({
+                    message = "Appuyez sur [~r~E~w~] pour parler au ~r~Policier",
+                    time_display = 100,
+                })
+
+                if IsControlJustPressed(1,51) then
+                    openCreateID()
+                end
+            end
+        end
+    end
+end)
+
+function openCreateID()
+    if not MenuOpen then
+
+        MenuOpen = true 
+        RageUI.Visible(RMenu:Get('modeo', 'main'), true)
+
+        Citizen.CreateThread(function()
+            while MenuOpen do
+                Citizen.Wait(1)
         RageUI.IsVisible(RMenu:Get('modeo', 'main'), true, true, true, function()
             RageUI.Checkbox("Acheter une carte d'identité ~r~- ~s~75$",nil, checkbox,{Style = RageUI.CheckboxStyle.Tick},function(Hovered,Active,Selected,Checked)
                 if Selected then
@@ -131,7 +170,6 @@ RMenu:Get('modeo', 'main'):SetRectangleBanner(255, 0, 0, 100)
             end)
 
             RageUI.Separator('↓ ~r~Valider la création ~w~↓')
-
             
         RageUI.Button("Valider", nil, { RightBadge = RageUI.BadgeStyle.Tick }, true, function(Hovered, Active, Selected) 
             if (Selected) then
@@ -158,44 +196,18 @@ RMenu:Get('modeo', 'main'):SetRectangleBanner(255, 0, 0, 100)
                     ESX.ShowNotification("Vous n'avez pas correctement renseigné la catégorie ~r~Origine")
                 else
                     ESX.ShowNotification("Identitée Sauvegardée ✅")
-                    RageUI.GoBack()
-                end
-            end
-        end)
-    end
-
-        end, function()
-            ---Panels
-        end, 1)
-
-
-        Citizen.Wait(0)
-    end
-end)
-
-local position = {
-    {x = 441.35 , y = -987.05, z = 30.69 },
-}
-
-Citizen.CreateThread(function()
-        while true do
-            Citizen.Wait(0)
-
-            for k in pairs(position) do
-    
-                local plyCoords = GetEntityCoords(GetPlayerPed(-1), false)
-                local dist = Vdist(plyCoords.x, plyCoords.y, plyCoords.z, position[k].x, position[k].y, position[k].z)
-                if dist <= 1.0 then
-
-                   RageUI.Text({
-                        message = "Appuyez sur [~r~E~w~] pour parler au ~r~Policier",
-                        time_display = 1
-                    })
-
-                    if IsControlJustPressed(1,51) then
-                        RageUI.Visible(RMenu:Get('modeo', 'main'), not RageUI.Visible(RMenu:Get('modeo', 'main')))
+                    RageUI.CloseAll()
+                    MenuOpen = false
                     end
                 end
-            end
+            end)
         end
     end)
+end
+        end, function()
+        end, 1)
+
+            Citizen.Wait(0)
+        end
+    end
+end)
