@@ -27,11 +27,9 @@ local function KeyboardInput(TextEntry, ExampleText, MaxStringLenght)
 		
 	if UpdateOnscreenKeyboard() ~= 2 then
 		local result = GetOnscreenKeyboardResult()
-		Citizen.Wait(500)
 		blockinput = false
 		return result --Returns the result
 	else
-		Citizen.Wait(500)
 		blockinput = false
 		return nil
 	end
