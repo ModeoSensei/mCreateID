@@ -120,7 +120,7 @@ RMenu:Get('modeo', 'main'):SetRectangleBanner(255, 0, 0, 100)
     
             RageUI.Button("Origine (Pays)", nil, {RightLabel = origine}, true, function(Hovered, Active, Selected)
                 if (Selected) then 
-                    local origineInput = KeyboardInput("Votre Origine  :", "Los Santos", 20)
+                    local origineInput = KeyboardInput("Votre Origine  :", "", 20)
                     if tostring(origineInput) == nil then
                         return false
                     else
