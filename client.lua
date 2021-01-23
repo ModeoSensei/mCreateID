@@ -9,7 +9,7 @@ Citizen.CreateThread(function()
 local MenuOpen = false
 
 local position = {
-    {x = 441.35 , y = -987.05, z = 30.69 },
+    {x = 440.05 , y = -981.17, z = 30.69 },
 }
 
 local Menu = {
